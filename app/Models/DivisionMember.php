@@ -5,13 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Shift extends Model
+class DivisionMember extends Model
 {
     use HasFactory;
 
+    protected $table = 'division_member';
+
     public $timestamps = false;
 
-    public $hidden = [
-      'pivot',
-    ];
+    public function Division()
+    {
+        return $this->hasMany(Division::class);
+    }
+
 }

@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Facade\FlareClient\Http\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
 class MemberRequest extends FormRequest
@@ -64,13 +62,9 @@ class MemberRequest extends FormRequest
             response()->json(
                 [
                     'status' => 'error',
-                    'code' => JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
+                    'code' => 422,
                     'error' => $errors,
-                ],
-                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
-            )
+                ], 422)
         );
     }
-    
-   
 }

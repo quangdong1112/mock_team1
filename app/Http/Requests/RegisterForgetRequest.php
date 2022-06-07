@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 
-class LoginRequest extends FormRequest
+class RegisterForgetRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,28 +24,26 @@ class LoginRequest extends FormRequest
      *
      * @return array
      */
-    public function __construct(
-        array $query = [],
-        array $request = [],
-        array $attributes = [],
-        array $cookies = [],
-        array $files = [],
-        array $server = [],
-        $content = null
-    ) {
-        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
-    }
-
     public function rules()
     {
         if ($this->method() == 'POST') {
             return [
-                'email' => 'required|email',
-                'password' => 'required',
+                'request_type' => 'required|regex:/^1$/',
+                'request_for_date' => 'required|date_format:Y-m-d',
+                'check_in' => 'required|date_format:H:i',
+                'check_out' => 'required|date_format:H:i',
+                'reason' => 'required',
             ];
-        } else {
-            return [];
         }
+
+        if ($this->method() == 'GET') {
+            return [
+                'request_type' => 'required|regex:/^1$/',
+                'request_for_date' => 'required|date_format:Y-m-d',
+            ];
+        }
+
+
     }
 
     public function failedValidation(Validator $validator)

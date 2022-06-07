@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\MultiDateFormat;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -33,12 +31,12 @@ class WorksheetRequest extends FormRequest
             'work_date' => 'nullable',
             'start_date' => [
                 'nullable',
-                new MultiDateFormat(),
+                'date_format:Y-m-d',
                 'before:today',
             ],
             'end_date' => [
                 'nullable',
-                new MultiDateFormat(),
+                'date_format:Y-m-d',
                 'before:today',
             ],
             'per_page'=> [
@@ -56,11 +54,9 @@ class WorksheetRequest extends FormRequest
             response()->json(
                 [
                     'status' => 'error',
-                    'code' => JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
+                    'code' => 422,
                     'error' => $errors,
-                ],
-                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
-            )
+                ], 422)
         );
     }
 }

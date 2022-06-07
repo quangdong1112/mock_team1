@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChecklogController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberRoleController;
+use App\Http\Controllers\RegisterForgetController;
+use App\Http\Controllers\RegisterLeaveController;
 use App\Http\Controllers\WorksheetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,9 +28,24 @@ use Illuminate\Support\Facades\Route;
 Route::controller(AuthController::class)->group(function () {
     Route::post('/login', 'login')->name('login');
     Route::delete('/logout', 'logout');
+    Route::post('/refresh-token', 'refresh');
     Route::patch('/change-password', 'changePassword');
 });
-Route::apiResource('worksheet', WorksheetController::class);
+Route::prefix('worksheet')
+    ->controller(WorksheetController::class)
+    ->group(function () {
+    Route::get('', 'index');
+    Route::get('/show-id', 'getById');
+    Route::get('/show-date', 'getByDate');
+});
+
+Route::prefix('register-leave')
+    ->controller(RegisterLeaveController::class)
+    ->group(function () {
+//        Route::get('', 'index');
+        Route::post('/store', 'store');
+    });
 Route::apiResource('member-role', MemberRoleController::class);
 Route::apiResource('time-log', ChecklogController::class);
-Route::apiResource('members', \App\Http\Controllers\MemberController::class)->only('edit','update')->middleware('auth:api');
+Route::apiResource('register-forget', RegisterForgetController::class);
+Route::apiResource('members', MemberController::class)->only('edit','update');

@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\MultiDateFormat;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
 class ChecklogRequest extends FormRequest
@@ -31,7 +29,7 @@ class ChecklogRequest extends FormRequest
         return [
             'work_date' => [
                 'required',
-                new MultiDateFormat(),
+                'date_format:Y-m-d',
                 'before:today',
             ],
         ];
@@ -43,11 +41,9 @@ class ChecklogRequest extends FormRequest
             response()->json(
                 [
                     'status' => 'error',
-                    'code' => JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
+                    'code' => 422,
                     'error' => $errors,
-                ],
-                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
-            )
+                ], 422)
         );
     }
 }

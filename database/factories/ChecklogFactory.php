@@ -17,9 +17,9 @@ class ChecklogFactory extends Factory
 
         static $id = 0;
         static $day = 1;
-        static $mouth = 1;
+        static $month = 1;
         static $year = 2022;
-        $workDate = $year.'-'.$mouth.'-'.$day;
+        $workDate = $year.'-'.$month.'-'.$day;
         $checkin = mktime(8, random_int(5, 59), random_int(0, 59), 5, $day, 2022);
         $exit = mktime(random_int(9, 16), random_int(0, 59), random_int(0, 59), 5, $day, 2022);
         $checkout = mktime(17, random_int(20, 50), random_int(0, 59), 5, $day, 2022);
@@ -45,23 +45,23 @@ class ChecklogFactory extends Factory
             $time = $checkout;
         }
 
-        if ($mouth % 2 != 0) {
+        if ($month % 2 != 0) {
             if ($day == 31) {
                 $day = 1;
-                $mouth = $mouth+1;
+                $mouth = $month+1;
             }
         } else {
-            if ($mouth == 2) {
+            if ($month == 2) {
                 if ($day >= 29) {
-                    if (!checkdate($mouth, $day, $year)) {
+                    if (!checkdate($month, $day, $year)) {
                         $day = 1;
-                        $mouth= $mouth+1;
+                        $month= $month+1;
                     }
                 }
             } else {
                 if ($day == 30) {
                     $day = 1;
-                    $mouth= $mouth+1;
+                    $month= $month+1;
                 }
             }
 

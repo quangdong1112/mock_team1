@@ -5,13 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Shift extends Model
+class MemberRequestQuota extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
-    public $hidden = [
-      'pivot',
-    ];
+    protected $table = 'member_request_quotas';
 }

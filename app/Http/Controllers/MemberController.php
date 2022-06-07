@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberRequest;
 use App\Http\Resources\MemberResource;
 use App\Services\MemberService;
@@ -16,6 +15,7 @@ class MemberController extends BaseController
 
     public function __construct(MemberService $memberService)
     {
+        parent::__construct();
         $this->service = $memberService;
     }
 

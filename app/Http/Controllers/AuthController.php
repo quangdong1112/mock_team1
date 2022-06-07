@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ChangePassRequest;
 use App\Http\Requests\LoginRequest;
-use App\Http\Resources\MemberLoginResource;
+use App\Http\Resources\MemberResource;
 use App\Models\Member;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends BaseController
@@ -28,7 +27,7 @@ class AuthController extends BaseController
         return $this->createNewToken($token);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         auth()->logout();
         $mess = 'Member successfully signed out';
@@ -44,14 +43,19 @@ class AuthController extends BaseController
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'data' => new MemberLoginResource(auth()->user()),
+            'data' => new MemberResource(auth()->user()->load(['roles', 'divisions', 'shifts'])),
         ], JsonResponse::HTTP_OK);
     }
 
-    public function changePassword(ChangePassRequest $request)
+    public function refresh() {
+        return $this->createNewToken(auth()->refresh());
+    }
+
+
+
+    public function changePassword(ChangePassRequest $request, $memberId)
     {
-        if (auth()->id()) {
-            $memberId = auth()->id();
+        if ($memberId == auth()->id()) {
             $member = Member::where('id', $memberId)->first();
             if (!Hash::check($request->old_password, $member->password)) {
                 $mess = [

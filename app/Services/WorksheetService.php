@@ -13,10 +13,9 @@ class WorksheetService extends BaseService
         return WorksheetRepository::class;
     }
 
-    public function showWorksheet($request, $memberId)
+    public function get($request)
     {
-        $model = $this->model();
-        $worksheet = $model->where('member_id', $memberId);
+        $worksheet = $this->model()->where('member_id', auth()->id());
         $orderBy = 'ASC';
 
         $sort = trim($request->sort);
@@ -37,10 +36,40 @@ class WorksheetService extends BaseService
 
         $perPage = $request->per_page;
         return $worksheet->orderBy('work_date', $orderBy)->paginate(
-            $perPage = $perPage ?? 30,
+            $perPage = $perPage ?? config('common.default_page_size'),
             $columns = ['*'],
             $pageName = 'page',
             $page = null
         )->withQueryString();
+    }
+
+    public function getById($id)
+    {
+        $worksheet = $this->findOrFail($id);
+
+        if ($worksheet->member_id == auth()->id()) {
+            return $worksheet;
+        } else {
+            return response()->json([
+                'status' => false,
+                'code' => 403,
+                'error' => 'Request worksheet invalid!'
+            ],403);
+        }
+    }
+
+    public function getByDate($workDate)
+    {
+
+        $worksheet = $this->model()->where('member_id', auth()->id())->where('work_date', $workDate);
+        if ($worksheet->exists()) {
+            return $worksheet->first();
+        } else {
+            return response()->json([
+                'status' => false,
+                'code' => 403,
+                'error' => 'Request worksheet invalid!'
+            ],403);
+        }
     }
 }

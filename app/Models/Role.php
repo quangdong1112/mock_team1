@@ -9,8 +9,20 @@ class Role extends Model
 {
     use HasFactory;
 
-    public function member()
+    public $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'pivot',
+    ];
+
+    public function members()
     {
-        return $this->belongsTo(Member::class, 'id');
+        return $this->belongsToMany(Member::class, 'member_role');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'permissions_role');
     }
 }
