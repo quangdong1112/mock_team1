@@ -72,10 +72,10 @@ class RegisterLeaveService extends BaseService
 
             if ($requestType == 2) {
                 $leaveQuota->remain = $remain - $timeLeave;
-                $leaveQuota->paid_leave = $leaveQuota->paid_leave + $timeLeave;
+                $leaveQuota->paid_leave = $timeLeave;
                 $leaveQuota->save();
             } else {
-                $leaveQuota->unpaid_leave = $leaveQuota->unpaid_leave + $timeLeave;
+                $leaveQuota->unpaid_leave = $timeLeave;
                 $leaveQuota->save();
             }
 
@@ -85,6 +85,85 @@ class RegisterLeaveService extends BaseService
                 'message' => 'Create request success!'
             ], 200);
 
+        }
+    }
+
+    public function show($request)
+    {
+        $requestForDate = trim($request->request_for_date);
+        $registerLeavePaid = $this->model()->where('member_id', auth()->id())
+            ->where('request_for_date', $requestForDate)
+            ->where('request_type', 2);
+        $registerLeaveUnpaid = $this->model()->where('member_id', auth()->id())
+            ->where('request_for_date', $requestForDate)
+            ->where('request_type', 3);
+        if ($registerLeavePaid->exists() || $registerLeaveUnpaid->exists()) {
+            return $registerLeavePaid->first() ?? $registerLeaveUnpaid->first();
+        } else {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'error' => 'This request is not available yet'
+            ], 404);
+        }
+    }
+
+    public function edit($request, $id)
+    {
+        $requestLeave = $this->findOrFail($id);
+        if ($requestLeave->request_type == 2) {
+            $timeLeave = $requestLeave->paid_leave;
+            $requestLeave->remain = $requestLeave->remain + $timeLeave;
+            $requestLeave->paid_leave = 0;
+            $requestLeave->save();
+        } else {
+            $requestLeave->unpaid_leave = 0;
+            $requestLeave->save();
+        }
+        if ($requestLeave->status == 0 && $requestLeave->member_id == auth()->id()) {
+            $requestForDate = trim($request->request_for_date);
+            $requestType = $request->request_type;
+            $checkin = trim($request->check_in);
+            $checkout = trim($request->check_out);
+            $reason = trim($request->reason);
+            $leaveAllDay= $request->leave_all_day;
+            $leaveStart= $request->leave_start;
+            $leaveEnd= $request->leave_end;
+            $leaveTime= $request->leave_time;
+            $leaveTime ? $timeLeave = round((((strtotime($leaveTime)-strtotime('08:00'))/60)/480) +1,2) : $timeLeave = 1;
+            $data = [
+                'member_id' => auth()->id(),
+                'request_type' => $requestType,
+                'request_for_date' => $requestForDate,
+                'check_in' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkin)),
+                'check_out' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkout)),
+                'reason' =>$reason,
+                'leave_all_day' => $leaveAllDay,
+                'leave_start' => $leaveStart,
+                'leave_end' => $leaveEnd,
+                'leave_time' => $leaveTime,
+            ];
+            $this->update($id, $data);
+
+            if ($requestType == 2) {
+                $requestLeave->remain = $requestLeave->remain - $timeLeave;
+                $requestLeave->paid_leave = $timeLeave;
+                $requestLeave->save();
+            } else {
+                $requestLeave->unpaid_leave = $timeLeave;
+                $requestLeave->save();
+            }
+            return response()->json([
+                'status' => true,
+                'code' => 201,
+                'message' => 'Update request success!'
+            ], 201);
+        } else {
+            return response()->json([
+                'status' => false,
+                'code' => 403,
+                'error' => 'The request is pending. You cannot edit this request'
+            ], 403);
         }
     }
 }

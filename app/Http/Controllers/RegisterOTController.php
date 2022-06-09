@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RequestRequest;
+use App\Http\Requests\RegisterOTRequest;
+use App\Services\RegisterOTService;
 use Illuminate\Http\Request;
 
-class RequestController extends Controller
+class RegisterOTController extends BaseController
 {
+    protected $registerOTService;
+
+    public function __construct(RegisterOTService $registerOTService)
+    {
+        parent::__construct();
+        $this->registerOTService = $registerOTService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -30,12 +39,12 @@ class RequestController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param RequestRequest $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RegisterOTRequest $request)
     {
-
+        return $this->registerOTService->store($request);
     }
 
     /**
@@ -46,7 +55,7 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->registerOTService->show($id);
     }
 
     /**
@@ -57,7 +66,7 @@ class RequestController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
 
     /**
@@ -67,9 +76,9 @@ class RequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(RegisterOTRequest $request, $id)
     {
-        //
+        return $this->registerOTService->edit($request,$id);
     }
 
     /**

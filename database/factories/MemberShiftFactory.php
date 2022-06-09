@@ -14,7 +14,6 @@ class MemberShiftFactory extends Factory
      */
     public function definition()
     {
-//        $memberId = DB::table('members')->pluck('id');
         static $memberId = 1;
         $shiftId = DB::table('shifts')->pluck('id');
         return [

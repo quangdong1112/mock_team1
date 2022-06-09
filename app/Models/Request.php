@@ -17,5 +17,6 @@ class Request extends Model
         'check_out',
         'reason',
         'status',
+        'request_ot_time'
     ];
 }

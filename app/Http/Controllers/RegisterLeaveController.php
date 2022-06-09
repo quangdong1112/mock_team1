@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterForgetRequest;
 use App\Http\Requests\RegisterLeaveRequest;
 use App\Services\RegisterLeaveService;
 use Illuminate\Http\Request;
@@ -20,5 +19,15 @@ class RegisterLeaveController extends BaseController
     public function store(RegisterLeaveRequest $request)
     {
         return $this->registerLeaveService->store($request);
+    }
+
+    public function show(RegisterLeaveRequest $request)
+    {
+        return $this->registerLeaveService->show($request);
+    }
+
+    public function update(RegisterLeaveRequest $request, $id)
+    {
+        return $this->registerLeaveService->edit($request, $id);
     }
 }

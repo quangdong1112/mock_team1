@@ -26,14 +26,14 @@ class RegisterLeaveRequest extends FormRequest
      */
     public function rules()
     {
-        if ($this->method() == 'POST') {
+        if ($this->method() == 'POST' || $this->method() == 'PUT') {
             return [
                 'request_type' => 'required|regex:/^[23]$/',
                 'request_for_date' => 'required|date_format:Y-m-d',
                 'check_in' => 'required|date_format:H:i',
                 'check_out' => 'required|date_format:H:i',
                 'reason' => 'required',
-                'leave_all_day' => 'nullable|numeric',
+                'leave_all_day' => 'required_without_all:leave_start,leave_end,leave_time|numeric',
                 'leave_start' => 'required_without:leave_all_day|date_format:H:i',
                 'leave_end' => 'required_without:leave_all_day|date_format:H:i',
                 'leave_time' => 'required_without:leave_all_day|date_format:H:i',
@@ -42,7 +42,6 @@ class RegisterLeaveRequest extends FormRequest
 
         if ($this->method() == 'GET') {
             return [
-                'request_type' => 'required|regex:/^[23]$/',
                 'request_for_date' => 'required|date_format:Y-m-d',
             ];
         }

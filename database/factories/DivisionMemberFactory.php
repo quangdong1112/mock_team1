@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Division;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
 
@@ -14,10 +15,14 @@ class DivisionMemberFactory extends Factory
      */
     public function definition()
     {
-        $divison = DB::table('divisions')->pluck('id');
+        static $memberId =1;
+        $member = DB::table('divisions')->pluck('member_id');
+        $divisonId = DB::table('divisions')->pluck('id');
+        $check = in_array($memberId,$member->toArray());
+        $divison = DB::table('divisions')->where('member_id', $memberId)->first();
         return [
-                'member_id' => $this->faker->unique()->randomElement(DB::table('members')->pluck('id')),
-                'division_id' => $this->faker->randomElement($divison),
+                'member_id' => $memberId++,
+                'division_id' => $check ? $divison->id : $this->faker->randomElement($divisonId),
             ];
     }
 }

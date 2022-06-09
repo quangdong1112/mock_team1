@@ -6,6 +6,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberRoleController;
 use App\Http\Controllers\RegisterForgetController;
 use App\Http\Controllers\RegisterLeaveController;
+use App\Http\Controllers\RegisterOTController;
 use App\Http\Controllers\WorksheetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,10 +43,12 @@ Route::prefix('worksheet')
 Route::prefix('register-leave')
     ->controller(RegisterLeaveController::class)
     ->group(function () {
-//        Route::get('', 'index');
         Route::post('/store', 'store');
+        Route::get('/show', 'show');
+        Route::put('/update/{id}', 'edit');
     });
 Route::apiResource('member-role', MemberRoleController::class);
 Route::apiResource('time-log', ChecklogController::class);
 Route::apiResource('register-forget', RegisterForgetController::class);
 Route::apiResource('members', MemberController::class)->only('edit','update');
+Route::apiResource('register-ot', RegisterOTController::class)->only('store','update','show');

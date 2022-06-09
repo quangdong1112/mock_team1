@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterForgetRequest;
 use App\Services\RegisterForgetService;
-use http\Env\Response;
 use Illuminate\Http\Request;
 
 class RegisterForgetController extends BaseController
@@ -41,7 +40,7 @@ class RegisterForgetController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(RegisterForgetRequest $request)
     {

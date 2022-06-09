@@ -53,9 +53,10 @@ class AuthController extends BaseController
 
 
 
-    public function changePassword(ChangePassRequest $request, $memberId)
+    public function changePassword(ChangePassRequest $request)
     {
-        if ($memberId == auth()->id()) {
+        $memberId = auth()->id();
+        if ($memberId) {
             $member = Member::where('id', $memberId)->first();
             if (!Hash::check($request->old_password, $member->password)) {
                 $mess = [

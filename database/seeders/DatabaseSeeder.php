@@ -15,16 +15,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//        \App\Models\Member::factory(100)->create();
-//        \App\Models\Role::factory(3)->create();
-//        \App\Models\Shift::factory(3)->create();
-//        \App\Models\Division::factory(6)->create();
-//        \App\Models\MemberRole::factory(100)->create();
-//        \App\Models\MemberShift::factory(100)->create();
+        \App\Models\Member::factory(100)->create();
+        \App\Models\Role::factory(3)->create();
+        \App\Models\MemberRole::factory(100)->create();
+        \App\Models\Shift::factory(3)->create();
+        \App\Models\MemberShift::factory(100)->create();
+        \App\Models\Division::factory(6)->create();
+        \App\Models\DivisionMember::factory(100)->create();
+        \App\Models\Checklog::factory(18000)->create();
+        \App\Models\MemberRequestQuota::factory(500)->create();
+        \App\Models\LeaveQuota::factory(100)->create();
         \App\Models\Worksheet::factory(9000)->create();
-//        \App\Models\Checklog::factory(1800)->create();
-//        \App\Models\DivisionMember::factory(100)->create();
-//        \App\Models\MemberRequestQuota::factory(500)->create();
-//        \App\Models\LeaveQuota::factory(100)->create();
     }
 }

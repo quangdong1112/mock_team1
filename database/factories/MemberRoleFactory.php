@@ -15,11 +15,11 @@ class MemberRoleFactory extends Factory
      */
     public function definition()
     {
-        $memberId = DB::table('members')->pluck('id');
+        static $memberId = 1;
         $roleId = DB::table('roles')->pluck('id');
         return [
             'role_id' => $this->faker->randomElement($roleId),
-            'member_id' => $this->faker->unique()->randomElement($memberId),
+            'member_id' => $memberId++,
         ];
     }
 }
