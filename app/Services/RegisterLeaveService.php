@@ -65,7 +65,7 @@ class RegisterLeaveService extends BaseService
                 'check_in' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkin)),
                 'check_out' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkout)),
                 'reason' => $reason,
-                'leave_all_day' => $leaveAllDay,
+                'leave_all_day' => $leaveAllDay != null ? 1 : null,
                 'leave_start' => $leaveAllDay != null ? null : $leaveStart,
                 'leave_end' => $leaveAllDay != null ? null : $leaveEnd,
                 'leave_time' => $leaveAllDay != null ? null : $leaveTime,
@@ -117,9 +117,9 @@ class RegisterLeaveService extends BaseService
         } else {
             return response()->json([
                 'status' => false,
-                'code' => 404,
+                'code' => 204,
                 'error' => 'This request is not available yet'
-            ], 404);
+            ], 204);
         }
     }
 
@@ -151,7 +151,7 @@ class RegisterLeaveService extends BaseService
                 'check_in' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkin)),
                 'check_out' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkout)),
                 'reason' =>$reason,
-                'leave_all_day' => $leaveAllDay,
+                'leave_all_day' => $leaveAllDay != null ? 1 : null,
                 'leave_start' => $leaveAllDay != null ? null : $leaveStart,
                 'leave_end' => $leaveAllDay != null ? null : $leaveEnd,
                 'leave_time' => $leaveAllDay != null ? null : $leaveTime,

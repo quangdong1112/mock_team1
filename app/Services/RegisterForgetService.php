@@ -77,9 +77,9 @@ class RegisterForgetService extends BaseService
         } else {
             return response()->json([
                 'status' => false,
-                'code' => 404,
+                'code' => 204,
                 'error' => 'This request is not available yet'
-            ], 404);
+            ], 204);
         }
     }
 

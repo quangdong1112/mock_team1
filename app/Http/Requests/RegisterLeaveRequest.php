@@ -34,9 +34,9 @@ class RegisterLeaveRequest extends FormRequest
                 'check_out' => 'required|date_format:H:i',
                 'reason' => 'required|string|max:100',
                 'leave_all_day' => 'required_without_all:leave_start,leave_end,leave_time|nullable|numeric',
-                'leave_start' => 'required_without:leave_all_day|date_format:H:i',
-                'leave_end' => 'required_without:leave_all_day|date_format:H:i',
-                'leave_time' => 'required_without:leave_all_day|date_format:H:i',
+                'leave_start' => 'required_without:leave_all_day|nullable|date_format:H:i',
+                'leave_end' => 'required_without:leave_all_day|nullable|date_format:H:i',
+                'leave_time' => 'required_without:leave_all_day|nullable|date_format:H:i',
             ];
         }
 
