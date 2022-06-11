@@ -22,5 +22,6 @@ class Request extends Model
         'leave_start',
         'leave_end',
         'leave_time',
+        'error_count',
     ];
 }
