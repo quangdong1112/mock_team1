@@ -49,6 +49,12 @@ Route::prefix('register-leave')
     });
 Route::apiResource('member-role', MemberRoleController::class);
 Route::apiResource('time-log', ChecklogController::class);
-Route::apiResource('register-forget', RegisterForgetController::class);
+Route::prefix('register-forget')
+    ->controller(RegisterForgetController::class)
+    ->group(function () {
+        Route::post('/store', 'store');
+        Route::get('/show', 'show');
+        Route::put('/update/{id}', 'update');
+    });
 Route::apiResource('members', MemberController::class)->only('edit','update');
 Route::apiResource('register-ot', RegisterOTController::class)->only('store','update','show');
