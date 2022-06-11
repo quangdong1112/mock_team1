@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\LeaveQuota;
+use App\Models\LeaveRequest;
 use App\Models\MemberRequestQuota;
 use App\Repositories\RequestRepository;
 
@@ -36,13 +37,14 @@ class RegisterLeaveService extends BaseService
             ->where('request_for_date', $requestForDate)
             ->where('request_type', 3)
             ->exists();
+        $requestLeave = LeaveRequest::where('member_id', auth()->id())
+                                    ->where('request_for_date',$requestForDate)
+                                    ->exists();
 
         $leaveQuota = LeaveQuota::where('member_id', auth()->id())->where('year', $year)->first();
-        $remain = $leaveQuota->remain;
-        $leaveTime ? $timeLeave = round((((strtotime($leaveTime)-strtotime('08:00'))/60)/480) +1,2) : $timeLeave = 1;
+        $leaveAllDay != null ? $timeLeave = 1 : $timeLeave = round((((strtotime($leaveTime)-strtotime('08:00'))/60)/480) +1,2);
 
-
-        if ($registerLeavePaid || $registerLeaveUnpaid) {
+        if ($registerLeavePaid || $registerLeaveUnpaid || $requestLeave) {
             return response()->json([
                 'status' => false,
                 'code' => 423,
@@ -56,26 +58,37 @@ class RegisterLeaveService extends BaseService
                 Remaining days of leave is: ".$leaveQuota->remain,
             ], 423);
         } else {
-            $data = [
+            $dataRequest = [
                 'member_id' => auth()->id(),
                 'request_type' => $requestType,
                 'request_for_date' => $requestForDate,
                 'check_in' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkin)),
                 'check_out' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkout)),
-                'reason' =>$reason,
+                'reason' => $reason,
                 'leave_all_day' => $leaveAllDay,
-                'leave_start' => $leaveStart,
-                'leave_end' => $leaveEnd,
-                'leave_time' => $leaveTime,
+                'leave_start' => $leaveAllDay != null ? null : $leaveStart,
+                'leave_end' => $leaveAllDay != null ? null : $leaveEnd,
+                'leave_time' => $leaveAllDay != null ? null : $leaveTime,
             ];
-            $this->create($data);
+
+            $dataLeave = [
+                'member_id' => auth()->id(),
+                'type' => $requestType,
+                'request_for_date' => $requestForDate,
+                'quota' => $timeLeave,
+                'status' => 0,
+                'created_by' => auth()->id(),
+            ];
+
+            $this->create($dataRequest);
+            LeaveRequest::create($dataLeave);
 
             if ($requestType == 2) {
-                $leaveQuota->remain = $remain - $timeLeave;
-                $leaveQuota->paid_leave = $timeLeave;
+                $leaveQuota->remain = $leaveQuota->remain - $timeLeave;
+                $leaveQuota->paid_leave =  $leaveQuota->paid_leave + $timeLeave;
                 $leaveQuota->save();
             } else {
-                $leaveQuota->unpaid_leave = $timeLeave;
+                $leaveQuota->unpaid_leave = $leaveQuota->unpaid_leave + $timeLeave;
                 $leaveQuota->save();
             }
 
@@ -97,7 +110,9 @@ class RegisterLeaveService extends BaseService
         $registerLeaveUnpaid = $this->model()->where('member_id', auth()->id())
             ->where('request_for_date', $requestForDate)
             ->where('request_type', 3);
-        if ($registerLeavePaid->exists() || $registerLeaveUnpaid->exists()) {
+        $requestLeave = LeaveRequest::where('member_id', auth()->id())
+            ->where('request_for_date',$requestForDate);
+        if ($registerLeavePaid->exists() || $registerLeaveUnpaid->exists() || $requestLeave->exists()) {
             return $registerLeavePaid->first() ?? $registerLeaveUnpaid->first();
         } else {
             return response()->json([
@@ -110,17 +125,14 @@ class RegisterLeaveService extends BaseService
 
     public function edit($request, $id)
     {
-        $requestLeave = $this->findOrFail($id);
-        if ($requestLeave->request_type == 2) {
-            $timeLeave = $requestLeave->paid_leave;
-            $requestLeave->remain = $requestLeave->remain + $timeLeave;
-            $requestLeave->paid_leave = 0;
-            $requestLeave->save();
-        } else {
-            $requestLeave->unpaid_leave = 0;
-            $requestLeave->save();
-        }
-        if ($requestLeave->status == 0 && $requestLeave->member_id == auth()->id()) {
+        $registerLeave = $this->findOrFail($id);
+        $leaveDate = $registerLeave->request_for_date;
+        $year = date('Y', strtotime($leaveDate));
+        $leaveRequest = LeaveRequest::where('member_id', auth()->id())->where('request_for_date', $leaveDate)->first();
+        $leaveQuota = LeaveQuota::where('member_id', auth()->id())->where('year', $year)->first();
+        $timeQuota = $leaveRequest->quota;
+
+        if ($registerLeave->status == 0 && $registerLeave->member_id == auth()->id()) {
             $requestForDate = trim($request->request_for_date);
             $requestType = $request->request_type;
             $checkin = trim($request->check_in);
@@ -130,8 +142,9 @@ class RegisterLeaveService extends BaseService
             $leaveStart= $request->leave_start;
             $leaveEnd= $request->leave_end;
             $leaveTime= $request->leave_time;
-            $leaveTime ? $timeLeave = round((((strtotime($leaveTime)-strtotime('08:00'))/60)/480) +1,2) : $timeLeave = 1;
-            $data = [
+
+            $leaveAllDay != null ? $timeLeave = 1 : $timeLeave = round((((strtotime($leaveTime)-strtotime('08:00'))/60)/480) +1,2);
+            $dataRequest = [
                 'member_id' => auth()->id(),
                 'request_type' => $requestType,
                 'request_for_date' => $requestForDate,
@@ -139,19 +152,38 @@ class RegisterLeaveService extends BaseService
                 'check_out' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkout)),
                 'reason' =>$reason,
                 'leave_all_day' => $leaveAllDay,
-                'leave_start' => $leaveStart,
-                'leave_end' => $leaveEnd,
-                'leave_time' => $leaveTime,
+                'leave_start' => $leaveAllDay != null ? null : $leaveStart,
+                'leave_end' => $leaveAllDay != null ? null : $leaveEnd,
+                'leave_time' => $leaveAllDay != null ? null : $leaveTime,
             ];
-            $this->update($id, $data);
+
+            $dataLeave = [
+                'member_id' => auth()->id(),
+                'type' => $requestType,
+                'request_for_date' => $requestForDate,
+                'quota' => $timeLeave,
+                'status' => 0,
+                'created_by' => auth()->id(),
+            ];
+            if ($registerLeave->request_type == 2) {
+                $leaveQuota->remain = $leaveQuota->remain + $timeQuota;
+                $leaveQuota->paid_leave = $leaveQuota->paid_leave - $timeQuota;
+                $leaveQuota->save();
+            } else {
+                $leaveQuota->unpaid_leave = $leaveQuota->unpaid_leave - $timeQuota;
+                $leaveQuota->save();
+            }
+            $this->update($id, $dataRequest);
+            $leaveRequest->fill($dataLeave);
+            $leaveRequest->save();
 
             if ($requestType == 2) {
-                $requestLeave->remain = $requestLeave->remain - $timeLeave;
-                $requestLeave->paid_leave = $timeLeave;
-                $requestLeave->save();
+                $leaveQuota->remain = $leaveQuota->remain - $timeLeave;
+                $leaveQuota->paid_leave = $leaveQuota->paid_leave + $timeLeave;
+                $leaveQuota->save();
             } else {
-                $requestLeave->unpaid_leave = $timeLeave;
-                $requestLeave->save();
+                $leaveQuota->unpaid_leave = $leaveQuota->unpaid_leave + $timeLeave;
+                $leaveQuota->save();
             }
             return response()->json([
                 'status' => true,

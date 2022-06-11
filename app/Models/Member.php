@@ -53,7 +53,6 @@ class Member extends Authenticatable implements JWTSubject
         'status',
         'note',
         'created_by'
-
     ];
 
     protected $hidden = [

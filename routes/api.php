@@ -45,7 +45,7 @@ Route::prefix('register-leave')
     ->group(function () {
         Route::post('/store', 'store');
         Route::get('/show', 'show');
-        Route::put('/update/{id}', 'edit');
+        Route::put('/update/{id}', 'update');
     });
 Route::apiResource('member-role', MemberRoleController::class);
 Route::apiResource('time-log', ChecklogController::class);

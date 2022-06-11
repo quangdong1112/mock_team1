@@ -33,7 +33,7 @@ class RegisterOTRequest extends FormRequest
             'request_for_date' => 'required|date_format:Y-m-d',
             'check_in' => 'required|date_format:H:i',
             'check_out' => 'required|date_format:H:i',
-            'reason' => 'required'
+            'reason' => 'required|string|max:100',
         ];
     }
 

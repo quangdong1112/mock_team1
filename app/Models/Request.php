@@ -17,6 +17,10 @@ class Request extends Model
         'check_out',
         'reason',
         'status',
-        'request_ot_time'
+        'request_ot_time',
+        'leave_all_day',
+        'leave_start',
+        'leave_end',
+        'leave_time',
     ];
 }
