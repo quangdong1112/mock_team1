@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use phpDocumentor\Reflection\Types\True_;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Member extends Authenticatable implements JWTSubject
@@ -87,5 +88,25 @@ class Member extends Authenticatable implements JWTSubject
     public function shifts()
     {
         return $this->belongsToMany(Shift::class, 'member_shift');
+    }
+
+    public function isAdmin()
+    {
+        foreach ($this->roles()->get() as $role) {
+            if ($role->title === 'Admin') {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public function isManager()
+    {
+        foreach ($this->roles()->get() as $role) {
+            if ($role->title === 'Manager') {
+                return true;
+            }
+            return false;
+        }
     }
 }

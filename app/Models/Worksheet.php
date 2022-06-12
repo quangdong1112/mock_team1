@@ -9,5 +9,11 @@ class Worksheet extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'check_in',
+        'check_out',
+        'note',
+    ];
+
     public $timestamps = false;
 }

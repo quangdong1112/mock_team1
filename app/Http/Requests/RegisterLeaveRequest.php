@@ -26,7 +26,11 @@ class RegisterLeaveRequest extends FormRequest
      */
     public function rules()
     {
-        if ($this->method() == 'POST' || $this->method() == 'PUT') {
+        if ($this->method() == 'GET') {
+            return [
+                'request_for_date' => 'required|date_format:Y-m-d',
+            ];
+        } else {
             return [
                 'request_type' => 'required|regex:/^[23]$/',
                 'request_for_date' => 'required|date_format:Y-m-d',
@@ -40,11 +44,6 @@ class RegisterLeaveRequest extends FormRequest
             ];
         }
 
-        if ($this->method() == 'GET') {
-            return [
-                'request_for_date' => 'required|date_format:Y-m-d',
-            ];
-        }
     }
 
     public function failedValidation(Validator $validator)

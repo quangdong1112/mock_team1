@@ -13,9 +13,14 @@ class DivisionMember extends Model
 
     public $timestamps = false;
 
-    public function Division()
+    public function member()
     {
-        return $this->hasMany(Division::class);
+        return $this->belongsTo(Member::class);
+    }
+
+    public function division()
+    {
+        return $this->belongsTo(Division::class);
     }
 
 }

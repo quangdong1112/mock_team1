@@ -18,4 +18,9 @@ class Division extends Model
         'pivot',
     ];
 
+    public function members()
+    {
+        return $this->belongsToMany(Member::class,'division_member');
+    }
+
 }

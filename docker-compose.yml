@@ -10,6 +10,19 @@ services:
             - ./:/var/www/app
         networks:
             - app-network
+    db:
+        image: mysql:8.0.29
+        container_name: mysql-db
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: Passw0rd!
+            MYSQL_DATABASE: mock1
+            MYSQL_USER: mock1
+            MYSQL_PASSWORD: Passw0rd!
+        networks:
+            - app-network
+
     # Nginx service
     nginx:
         image: nginx:alpine

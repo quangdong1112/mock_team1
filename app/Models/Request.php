@@ -15,6 +15,8 @@ class Request extends Model
         'request_type',
         'check_in',
         'check_out',
+        'compensation_time',
+        'compensation_date',
         'reason',
         'status',
         'request_ot_time',
@@ -22,6 +24,13 @@ class Request extends Model
         'leave_start',
         'leave_end',
         'leave_time',
+        'request_ot_time',
+        'manager_confirmed_status',
+        'manager_confirmed_at',
+        'manager_confirmed_comment',
+        'admin_approved_status',
+        'admin_approved_at',
+        'admin_approved_comment',
         'error_count',
     ];
 }

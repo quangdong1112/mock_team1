@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 
-class RegisterForgetRequest extends FormRequest
+class ConfirmRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -32,16 +32,13 @@ class RegisterForgetRequest extends FormRequest
             ];
         } else {
             return [
-                'request_type' => 'required|regex:/^1$/',
-                'request_for_date' => 'required|date_format:Y-m-d',
-                'check_in' => 'required|date_format:H:i',
-                'check_out' => 'required|date_format:H:i',
-                'reason' => 'required|string|max:100',
-                'error_count' => 'nullable|regex:/^[12]$/'
+                'status' => [
+                    'required',
+                    'regex:/^(-1|1)$/',
+                ],
+                'comment' => 'required|string|max:100',
             ];
         }
-
-
     }
 
     public function failedValidation(Validator $validator)

@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RequestRequest;
+use App\Http\Requests\ConfirmRequest;
+use App\Services\RequestService;
 use Illuminate\Http\Request;
 
-class RequestController extends Controller
+class RequestController extends BaseController
 {
+    protected $requestService;
+    public function __construct(RequestService $requestService)
+    {
+        parent::__construct();
+        $this->requestService = $requestService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +22,7 @@ class RequestController extends Controller
      */
     public function index()
     {
-        //
+        return $this->requestService->getRequestSent();
     }
 
     /**
@@ -44,9 +52,9 @@ class RequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ConfirmRequest $request)
     {
-        //
+        return $this->requestService->show($request);
     }
 
     /**
@@ -67,9 +75,9 @@ class RequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ConfirmRequest $request, $id)
     {
-        //
+        return $this->requestService->confirm($request, $id);
     }
 
     /**
