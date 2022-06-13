@@ -37,7 +37,7 @@ class RegisterForgetRequest extends FormRequest
                 'check_in' => 'required|date_format:H:i',
                 'check_out' => 'required|date_format:H:i',
                 'reason' => 'required|string|max:100',
-                'error_count' => 'nullable|regex:/^[12]$/'
+                'error_count' => 'required|regex:/^[01]$/'
             ];
         }
 

@@ -51,7 +51,7 @@ class RegisterForgetService extends BaseService
                 'check_in' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkin)),
                 'check_out' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkout)),
                 'reason' =>$reason,
-                'error_count' => $errorCount ?? 0,
+                'error_count' => $errorCount,
             ];
             $this->create($data);
             $requestQuota->remain = $remain - 1;
@@ -101,7 +101,7 @@ class RegisterForgetService extends BaseService
                 'check_in' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkin)),
                 'check_out' => date('Y-m-d H:i:s', strtotime($requestForDate.' '.$checkout)),
                 'reason' =>$reason,
-                'error_count' => $errorCount ?? 0,
+                'error_count' => $errorCount,
 
             ];
             $this->update($id, $data);
